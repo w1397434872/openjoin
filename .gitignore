@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Env
+.env
+
+# Logs
+log/
+
+# Uploads
+uploads/
+
+# VSCode
+.vscode/
+
+# Milvus data（非常重要）
+milvus/volumes/
+
+# OS
+.DS_Store
+
+#工具
+mcp/
