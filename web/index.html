@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 智能助手</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <span>AI 助手</span>
+                </div>
+                <button class="new-chat-btn" onclick="app.newChat()">
+                    <i class="fas fa-plus"></i>
+                    <span>新对话</span>
+                </button>
+            </div>
+
+            <!-- 对话历史列表 -->
+            <div class="chat-history" id="chatHistory">
+                <div class="chat-history-title" onclick="app.toggleHistory()">
+                    <span>对话历史</span>
+                    <div class="chat-history-actions">
+                        <button class="clear-history-btn" onclick="event.stopPropagation(); app.clearAllHistory()" title="清除所有历史">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <i class="fas fa-chevron-down history-toggle-icon" id="historyToggleIcon"></i>
+                    </div>
+                </div>
+                <div class="chat-history-list" id="chatHistoryList">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-title">工具管理</div>
+                    <a href="#" class="nav-item" data-page="chat" onclick="app.switchPage('chat')">
+                        <i class="fas fa-comments"></i>
+                        <span>对话</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="tools" onclick="app.switchPage('tools')">
+                        <i class="fas fa-toolbox"></i>
+                        <span>工具列表</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-title">MCP 管理</div>
+                    <a href="#" class="nav-item" data-page="mcp" onclick="app.switchPage('mcp')">
+                        <i class="fas fa-server"></i>
+                        <span>MCP 服务器</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-title">Skill 管理</div>
+                    <a href="#" class="nav-item" data-page="skills" onclick="app.switchPage('skills')">
+                        <i class="fas fa-puzzle-piece"></i>
+                        <span>Skill 列表</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-title">系统</div>
+                    <a href="#" class="nav-item" data-page="memory" onclick="app.switchPage('memory')">
+                        <i class="fas fa-brain"></i>
+                        <span>记忆管理</span>
+                    </a>
+                    <a href="#" class="nav-item" data-page="tokens" onclick="app.switchPage('tokens')">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Token 统计</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-indicator" id="statusIndicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">连接中...</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 聊天页面 -->
+            <div class="page active" id="page-chat">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h2>AI 智能助手</h2>
+                        <div class="chat-actions">
+                            <button class="icon-btn" onclick="app.clearChat()" title="清空对话">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="welcome-message">
+                            <div class="welcome-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h3>你好！我是 AI 智能助手</h3>
+                            <p>我可以帮你解答问题、处理文件、管理工具等。试着问我点什么吧！</p>
+                            <div class="quick-actions">
+                                <button class="quick-btn" onclick="app.sendQuickMessage('介绍一下你自己')">
+                                    <i class="fas fa-user"></i>
+                                    介绍自己
+                                </button>
+                                <button class="quick-btn" onclick="app.sendQuickMessage('查看可用工具')">
+                                    <i class="fas fa-tools"></i>
+                                    查看工具
+                                </button>
+                                <button class="quick-btn" onclick="app.sendQuickMessage('帮我搜索资料')">
+                                    <i class="fas fa-search"></i>
+                                    搜索资料
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-area">
+                        <div class="input-toolbar">
+                            <button class="toolbar-btn" onclick="app.uploadFile()" title="上传文件">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <button class="toolbar-btn" onclick="app.uploadFolder()" title="上传文件夹">
+                                <i class="fas fa-folder-open"></i>
+                            </button>
+                            <button class="toolbar-btn" onclick="app.uploadImage()" title="上传图片">
+                                <i class="fas fa-image"></i>
+                            </button>
+                            <button class="toolbar-btn" onclick="app.recordVoice()" title="语音输入">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                        <div class="input-wrapper">
+                            <textarea
+                                id="messageInput"
+                                placeholder="输入消息..."
+                                rows="1"
+                                onkeydown="app.handleKeyDown(event)"
+                                oninput="app.autoResize(this)"
+                            ></textarea>
+                            <button class="send-btn" onclick="app.sendMessage()" id="sendBtn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div class="input-hint">
+                            <span>按 Enter 发送，Shift + Enter 换行</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工具列表页面 -->
+            <div class="page" id="page-tools">
+                <div class="page-header">
+                    <h2><i class="fas fa-toolbox"></i> 工具列表</h2>
+                    <button class="refresh-btn" onclick="app.loadTools()">
+                        <i class="fas fa-sync-alt"></i> 刷新
+                    </button>
+                </div>
+                <div class="tools-grid" id="toolsGrid">
+                    <div class="loading">加载中...</div>
+                </div>
+            </div>
+
+            <!-- MCP 服务器页面 -->
+            <div class="page" id="page-mcp">
+                <div class="page-header">
+                    <h2><i class="fas fa-server"></i> MCP 服务器管理</h2>
+                    <button class="primary-btn" onclick="app.showAddMCPServerModal()">
+                        <i class="fas fa-plus"></i> 添加服务器
+                    </button>
+                </div>
+                <div class="mcp-servers-list" id="mcpServersList">
+                    <div class="loading">加载中...</div>
+                </div>
+            </div>
+
+            <!-- Skill 列表页面 -->
+            <div class="page" id="page-skills">
+                <div class="page-header">
+                    <h2><i class="fas fa-puzzle-piece"></i> Skill 管理</h2>
+                    <button class="primary-btn" onclick="app.showAddSkillModal()">
+                        <i class="fas fa-plus"></i> 添加 Skill
+                    </button>
+                </div>
+                <div class="skills-list" id="skillsList">
+                    <div class="loading">加载中...</div>
+                </div>
+            </div>
+
+            <!-- 记忆管理页面 -->
+            <div class="page" id="page-memory">
+                <div class="page-header">
+                    <h2><i class="fas fa-brain"></i> 记忆管理</h2>
+                    <button class="danger-btn" onclick="app.clearMemory()">
+                        <i class="fas fa-trash"></i> 清除记忆
+                    </button>
+                </div>
+                <div class="memory-content">
+                    <div class="memory-stats" id="memoryStats">
+                        <div class="loading">加载中...</div>
+                    </div>
+                    <div class="memory-search">
+                        <h3>搜索记忆</h3>
+                        <div class="search-box">
+                            <input type="text" id="memorySearchInput" placeholder="输入搜索内容...">
+                            <button onclick="app.searchMemory()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div class="search-results" id="memorySearchResults"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Token 统计页面 -->
+            <div class="page" id="page-tokens">
+                <div class="page-header">
+                    <h2><i class="fas fa-chart-line"></i> Token 使用统计</h2>
+                    <button class="refresh-btn" onclick="app.loadTokenStats()">
+                        <i class="fas fa-sync-alt"></i> 刷新
+                    </button>
+                </div>
+                <div class="token-stats" id="tokenStats">
+                    <div class="loading">加载中...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal-overlay" id="modalOverlay" onclick="app.closeModal()"></div>
+
+    <!-- 添加 MCP 服务器模态框 -->
+    <div class="modal" id="addMCPServerModal">
+        <div class="modal-header">
+            <h3>添加 MCP 服务器</h3>
+            <button class="close-btn" onclick="app.closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>服务器名称</label>
+                <input type="text" id="mcpServerName" placeholder="例如: filesystem">
+            </div>
+            <div class="form-group">
+                <label>启动命令</label>
+                <input type="text" id="mcpServerCommand" placeholder="例如: python">
+            </div>
+            <div class="form-group">
+                <label>启动参数（每行一个）</label>
+                <textarea id="mcpServerArgs" rows="3" placeholder="例如:&#10;/path/to/server.py"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="secondary-btn" onclick="app.closeModal()">取消</button>
+            <button class="primary-btn" onclick="app.addMCPServer()">添加</button>
+        </div>
+    </div>
+
+    <!-- 添加 Skill 模态框 -->
+    <div class="modal" id="addSkillModal">
+        <div class="modal-header">
+            <h3>添加 Skill</h3>
+            <button class="close-btn" onclick="app.closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Skill 目录路径</label>
+                <input type="text" id="skillSourcePath" placeholder="例如: /path/to/skill">
+            </div>
+            <div class="form-group">
+                <label>Skill 名称（可选）</label>
+                <input type="text" id="skillName" placeholder="留空将自动从配置读取">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="secondary-btn" onclick="app.closeModal()">取消</button>
+            <button class="primary-btn" onclick="app.addSkill()">添加</button>
+        </div>
+    </div>
+
+    <!-- 隐藏的文件输入 -->
+    <input type="file" id="fileInput" style="display: none" onchange="app.handleFileSelect(event)">
+    <input type="file" id="folderInput" style="display: none" webkitdirectory directory onchange="app.handleFolderSelect(event)">
+    <input type="file" id="imageInput" style="display: none" accept="image/*" onchange="app.handleImageSelect(event)">
+
+    <script src="js/app.js?v=2"></script>
+</body>
+</html>

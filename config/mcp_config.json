@@ -1,0 +1,96 @@
+{
+  "mcpServers": {
+    "fetch": {
+      "disabled": false,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "mcp-server-fetch"
+      ]
+    },
+    "sum-ylg": {
+      "disabled": false,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "mcp-server-sum-ylg"
+      ]
+    },
+    "12306": {
+      "disabled": false,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "D:/adaconda/envs/agent/python.exe",
+      "args": [
+        "D:\\12306查票助手智能体\\src\\12306_mcp.py"
+      ]
+    },
+    "sirchmunk": {
+      "timeout": 60,
+      "type": "stdio",
+      "command": "D:/adaconda/envs/sirchmunk/Scripts/sirchmunk.exe",
+      "args": [
+        "mcp",
+        "serve"
+      ],
+      "env": {
+        "SIRCHMUNK_SEARCH_PATHS": "D:\\daotop\\sirchmunk_apicall\\tag\\data\\原数据\\标准结果.xlsx",
+        "PATH": "D:/daotop/Sirchmunk;${PATH}"
+      }
+    },
+    "file-reader": {
+      "disabled": true,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "D:/uv/uv.exe",
+      "args": [
+        "tool",
+        "run",
+        "mcp-file-contents-reader"
+      ]
+    },
+    "FileSystem": {
+      "disabled": true,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "D:/Join_Agent/mcp/mcp_filesystem/.venv/Scripts/python.exe",
+      "args": [
+        "D:/Join_Agent/mcp/mcp_filesystem/run_mcp.py"
+      ]
+    },
+    "custom-mcp-database": {
+      "disabled": true,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "D:/Join_Agent/mcp/custom-mcp-database/.venv/Scripts/python.exe",
+      "args": [
+        "d:/Join_Agent/mcp/custom-mcp-database/main.py"
+      ]
+    },
+    "windows-mcp": {
+      "disabled": false,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "windows-mcp"
+      ]
+    },
+    "Generalshell_mcp_server": {
+      "command": "d:/openjoin/mcp/Generalshell_mcp_server/.venv/Scripts/python.exe",
+      "args": [
+        "-m",
+        "Generalshell_mcp_server.server",
+        "--config",
+        "d:/openjoin/mcp/Generalshell_mcp_server/windows_config.json"
+      ],
+      "env": {
+        "CMD_LINE_MCP_SECURITY_REQUIRE_SESSION_ID": "false",
+        "CMD_LINE_MCP_SECURITY_AUTO_APPROVE_DIRECTORIES_IN_DESKTOP_MODE": "true"
+      },
+      "disabled": true
+    }
+  }
+}

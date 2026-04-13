@@ -1,0 +1,20 @@
+{
+  "agent-browser": {
+    "name": "agent-browser",
+    "enabled": true,
+    "source_path": "skills\\agent-browser",
+    "metadata": {}
+  },
+  "Git": {
+    "name": "Git",
+    "enabled": true,
+    "source_path": "skills\\Git",
+    "metadata": {}
+  },
+  "who_am_i": {
+    "name": "who_am_i",
+    "enabled": true,
+    "source_path": "skills\\my",
+    "metadata": {}
+  }
+}
