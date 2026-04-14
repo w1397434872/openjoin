@@ -1185,7 +1185,16 @@ class App {
     async loadMemoryStats() {
         try {
             const data = await this.apiRequest('/memory/stats');
+            console.log('[记忆] 统计数据:', data);
             const container = document.getElementById('memoryStats');
+
+            // 文本记忆统计字段: total_turns, current_turns, memory_blocks, total_chars
+            const textMemory = data.text_memory || {};
+            const textCount = textMemory.total_turns || textMemory.current_turns || textMemory.memory_blocks || 0;
+
+            // 向量记忆统计字段: connected, local_cache_count, total_count
+            const vectorMemory = data.vector_memory || {};
+            const vectorCount = vectorMemory.total_count || vectorMemory.local_cache_count || 0;
 
             container.innerHTML = `
                 <div class="stat-card">
@@ -1195,7 +1204,7 @@ class App {
                         </div>
                         <div class="stat-title">文本记忆</div>
                     </div>
-                    <div class="stat-value">${data.text_memory?.message_count || 0}</div>
+                    <div class="stat-value">${textCount}</div>
                     <div class="stat-label">消息数量</div>
                 </div>
                 <div class="stat-card">
@@ -1205,7 +1214,7 @@ class App {
                         </div>
                         <div class="stat-title">向量记忆</div>
                     </div>
-                    <div class="stat-value">${data.vector_memory?.document_count || 0}</div>
+                    <div class="stat-value">${vectorCount}</div>
                     <div class="stat-label">文档数量</div>
                 </div>
             `;
@@ -1219,9 +1228,10 @@ class App {
         if (!query) return;
 
         try {
-            const data = await this.apiRequest('/memory/search', {
-                method: 'POST',
-                body: JSON.stringify({ query, top_k: 5 })
+            // 使用查询参数而不是请求体
+            const params = new URLSearchParams({ query, top_k: '5' });
+            const data = await this.apiRequest(`/memory/search?${params.toString()}`, {
+                method: 'POST'
             });
 
             const container = document.getElementById('memorySearchResults');
