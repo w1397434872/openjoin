@@ -143,8 +143,6 @@ class ReActLoop:
         # 构建消息列表，融合两种记忆
         self.messages = self._build_messages_with_memory(user_input, similar_memories)
 
-        tools = self._get_all_tools()
-
         for step in range(1, self.max_iterations + 1):
             print(f"\n{'='*50}")
             print(f"步骤 {step}/{self.max_iterations}")
@@ -152,6 +150,9 @@ class ReActLoop:
 
             if self.logger:
                 self.logger.info(f"步骤 {step}/{self.max_iterations}")
+
+            # 每个步骤都重新获取工具列表（确保反映最新的 MCP 服务器状态）
+            tools = self._get_all_tools()
 
             # 1. 思考
             print("\n[思考中...]")

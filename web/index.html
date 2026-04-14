@@ -184,6 +184,17 @@
                 <div class="mcp-servers-list" id="mcpServersList">
                     <div class="loading">加载中...</div>
                 </div>
+
+                <!-- 工具管理部分 -->
+                <div class="page-header" style="margin-top: 40px;">
+                    <h2><i class="fas fa-tools"></i> 工具管理</h2>
+                    <button class="primary-btn" onclick="app.showDisableToolModal()">
+                        <i class="fas fa-ban"></i> 禁用工具
+                    </button>
+                </div>
+                <div class="tools-list" id="toolsList">
+                    <div class="loading">加载中...</div>
+                </div>
             </div>
 
             <!-- Skill 列表页面 -->
@@ -267,6 +278,27 @@
         <div class="modal-footer">
             <button class="secondary-btn" onclick="app.closeModal()">取消</button>
             <button class="primary-btn" onclick="app.addMCPServer()">添加</button>
+        </div>
+    </div>
+
+    <!-- 禁用工具模态框 -->
+    <div class="modal" id="disableToolModal">
+        <div class="modal-header">
+            <h3>禁用工具</h3>
+            <button class="close-btn" onclick="app.closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>工具名称</label>
+                <input type="text" id="disableToolName" placeholder="例如: FileSystem">
+                <small style="color: #666; margin-top: 5px; display: block;">输入要禁用的工具名称，禁用后该工具将不会被 AI 调用</small>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="secondary-btn" onclick="app.closeModal()">取消</button>
+            <button class="primary-btn" onclick="app.disableTool()">禁用</button>
         </div>
     </div>
 

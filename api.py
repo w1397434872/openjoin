@@ -543,6 +543,82 @@ async def stop_mcp_server(server_name: str):
     return MCPActionResponse(success=True, message=message)
 
 
+@app.get("/mcp/tools/disabled", response_model=List[str])
+async def get_disabled_tools():
+    """获取被禁用的工具列表"""
+    if not agent or not agent.mcp:
+        raise HTTPException(status_code=503, detail="智能体未初始化")
+
+    return agent.mcp.list_disabled_tools()
+
+
+@app.get("/mcp/tools/all", response_model=ToolsResponse)
+async def get_all_mcp_tools():
+    """获取所有MCP工具（包括已禁用的）"""
+    if not agent or not agent.mcp:
+        raise HTTPException(status_code=503, detail="智能体未初始化")
+
+    # 获取所有工具（包括已禁用的）
+    all_tools = []
+    disabled_tools = agent.mcp.list_disabled_tools()
+
+    # 从 mcp.tools 字典中获取所有工具
+    for tool_name, (mcp_name, tool) in agent.mcp.tools.items():
+        all_tools.append({
+            "name": tool_name,
+            "type": "MCP",
+            "description": tool.description if hasattr(tool, 'description') else ""
+        })
+
+    # 添加被禁用但不在 tools 字典中的工具（可能属于已停止的服务器）
+    for tool_name in disabled_tools:
+        if tool_name not in agent.mcp.tools:
+            all_tools.append({
+                "name": tool_name,
+                "type": "MCP",
+                "description": "(已禁用 - 所属服务器未运行)"
+            })
+
+    tool_list = [ToolInfo(**tool) for tool in all_tools]
+    return ToolsResponse(tools=tool_list)
+
+
+@app.post("/mcp/tools/{tool_name}/disable", response_model=MCPActionResponse)
+async def disable_tool(tool_name: str):
+    """
+    禁用单个工具
+
+    - **tool_name**: 工具名称
+    """
+    if not agent or not agent.mcp:
+        raise HTTPException(status_code=503, detail="智能体未初始化")
+
+    success, message = agent.mcp.disable_tool(tool_name)
+
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+
+    return MCPActionResponse(success=True, message=message)
+
+
+@app.post("/mcp/tools/{tool_name}/enable", response_model=MCPActionResponse)
+async def enable_tool(tool_name: str):
+    """
+    启用单个工具
+
+    - **tool_name**: 工具名称
+    """
+    if not agent or not agent.mcp:
+        raise HTTPException(status_code=503, detail="智能体未初始化")
+
+    success, message = agent.mcp.enable_tool(tool_name)
+
+    if not success:
+        raise HTTPException(status_code=400, detail=message)
+
+    return MCPActionResponse(success=True, message=message)
+
+
 @app.get("/memory/stats", response_model=MemoryStats)
 async def get_memory_stats():
     """获取记忆统计信息"""

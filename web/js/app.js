@@ -70,6 +70,7 @@ class App {
                 break;
             case 'mcp':
                 this.loadMCPServers();
+                this.loadMCPTools();
                 break;
             case 'skills':
                 this.loadSkills();
@@ -922,6 +923,148 @@ class App {
             this.loadMCPServers();
         } catch (error) {
             console.error('切换 MCP 服务器状态失败:', error);
+        }
+    }
+
+    // ========================================
+    // 工具管理 (MCP页面)
+    // ========================================
+
+    async loadMCPTools() {
+        const container = document.getElementById('toolsList');
+        if (!container) {
+            console.log('[MCP工具] toolsList 容器不存在，跳过加载');
+            return;
+        }
+
+        try {
+            // 获取所有MCP工具（包括已禁用的）
+            const toolsData = await this.apiRequest('/mcp/tools/all');
+            console.log('[MCP工具] 获取到的工具数据:', toolsData);
+
+            // 获取被禁用的工具
+            let disabledTools = [];
+            try {
+                const response = await this.apiRequest('/mcp/tools/disabled');
+                // 确保转换为数组
+                disabledTools = Array.isArray(response) ? response : Object.values(response);
+                console.log('[MCP工具] 被禁用的工具:', disabledTools);
+            } catch (e) {
+                console.warn('[MCP工具] 获取禁用工具列表失败:', e);
+            }
+
+            if (!toolsData.tools || toolsData.tools.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-tools"></i>
+                        <p>暂无可用工具</p>
+                    </div>
+                `;
+                return;
+            }
+
+            console.log('[MCP工具] 总工具数量:', toolsData.tools.length);
+            console.log('[MCP工具] 所有工具名称:', toolsData.tools.map(t => t.name));
+            console.log('[MCP工具] disabledTools 内容:', disabledTools);
+
+            // 检查被禁用的工具是否在列表中
+            disabledTools.forEach(dt => {
+                const found = toolsData.tools.find(t => t.name === dt);
+                console.log(`[MCP工具] 被禁用的工具 '${dt}' 在列表中:`, found ? '是' : '否');
+            });
+
+            container.innerHTML = toolsData.tools.map(tool => {
+                // 使用更严格的比较，确保类型匹配
+                const isDisabled = disabledTools.some(dt => dt === tool.name || dt.toString() === tool.name.toString());
+                console.log(`[MCP工具] 工具 ${tool.name}: isDisabled=${isDisabled}`);
+                return `
+                    <div class="tool-card ${isDisabled ? 'disabled' : ''}">
+                        <div class="tool-info">
+                            <div class="tool-header">
+                                <span class="tool-name">${tool.name}</span>
+                                <span class="tool-type">${tool.type}</span>
+                                ${isDisabled ? '<span class="badge" style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-size: 12px; margin-left: 8px;">已禁用</span>' : ''}
+                            </div>
+                            <div class="tool-description">${tool.description || '无描述'}</div>
+                        </div>
+                        <div class="tool-actions">
+                            <button class="action-btn ${isDisabled ? 'enable' : 'disable'}" onclick="app.toggleTool('${tool.name}', ${isDisabled})">
+                                <i class="fas fa-${isDisabled ? 'check' : 'ban'}"></i>
+                                ${isDisabled ? '启用' : '禁用'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (error) {
+            console.error('加载工具列表失败:', error);
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>加载工具列表失败</p>
+                    <small>${error.message}</small>
+                </div>
+            `;
+        }
+    }
+
+    showDisableToolModal() {
+        document.getElementById('modalOverlay').classList.add('active');
+        document.getElementById('disableToolModal').classList.add('active');
+    }
+
+    async disableTool() {
+        const toolName = document.getElementById('disableToolName').value.trim();
+
+        if (!toolName) {
+            this.showToast('请输入工具名称', 'error');
+            return;
+        }
+
+        try {
+            await this.apiRequest(`/mcp/tools/${toolName}/disable`, {
+                method: 'POST'
+            });
+            this.showToast(`工具 "${toolName}" 已禁用`, 'success');
+            this.closeModal();
+            this.loadMCPTools();
+
+            // 清空表单
+            document.getElementById('disableToolName').value = '';
+        } catch (error) {
+            console.error('禁用工具失败:', error);
+            this.showToast('禁用工具失败: ' + error.message, 'error');
+        }
+    }
+
+    async enableTool(toolName) {
+        try {
+            await this.apiRequest(`/mcp/tools/${toolName}/enable`, {
+                method: 'POST'
+            });
+            this.showToast(`工具 "${toolName}" 已启用`, 'success');
+            this.loadMCPTools();
+        } catch (error) {
+            console.error('启用工具失败:', error);
+            this.showToast('启用工具失败: ' + error.message, 'error');
+        }
+    }
+
+    async toggleTool(toolName, isDisabled) {
+        if (isDisabled) {
+            await this.enableTool(toolName);
+        } else {
+            // 如果当前是启用状态，则禁用
+            try {
+                await this.apiRequest(`/mcp/tools/${toolName}/disable`, {
+                    method: 'POST'
+                });
+                this.showToast(`工具 "${toolName}" 已禁用`, 'success');
+                this.loadMCPTools();
+            } catch (error) {
+                console.error('禁用工具失败:', error);
+                this.showToast('禁用工具失败: ' + error.message, 'error');
+            }
         }
     }
 

@@ -882,6 +882,79 @@ body {
 }
 
 /* ========================================
+   工具管理页面
+   ======================================== */
+
+.tools-list {
+    padding: 24px;
+}
+
+.tool-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s;
+}
+
+.tool-card:hover {
+    box-shadow: var(--shadow-sm);
+}
+
+.tool-card.disabled {
+    opacity: 0.6;
+    background: var(--bg-secondary);
+}
+
+.tool-info {
+    flex: 1;
+}
+
+.tool-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.tool-name {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.tool-type {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+}
+
+.tool-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.tool-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.tool-actions .action-btn.enable {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.tool-actions .action-btn.disable {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* ========================================
    Skill 页面
    ======================================== */
 

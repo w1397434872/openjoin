@@ -17,6 +17,8 @@ uploads/
 
 # Milvus data（非常重要）
 milvus/volumes/
+milvus/embedding_model/
+
 
 # OS
 .DS_Store

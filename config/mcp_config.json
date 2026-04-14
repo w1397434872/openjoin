@@ -28,6 +28,7 @@
       ]
     },
     "sirchmunk": {
+      "disabled": false,
       "timeout": 60,
       "type": "stdio",
       "command": "D:/adaconda/envs/sirchmunk/Scripts/sirchmunk.exe",
@@ -70,7 +71,6 @@
       ]
     },
     "windows-mcp": {
-      "disabled": false,
       "timeout": 60,
       "type": "stdio",
       "command": "uvx",
@@ -79,6 +79,9 @@
       ]
     },
     "Generalshell_mcp_server": {
+      "disabled": true,
+      "timeout": 60,
+      "type": "stdio",
       "command": "d:/openjoin/mcp/Generalshell_mcp_server/.venv/Scripts/python.exe",
       "args": [
         "-m",
@@ -89,8 +92,7 @@
       "env": {
         "CMD_LINE_MCP_SECURITY_REQUIRE_SESSION_ID": "false",
         "CMD_LINE_MCP_SECURITY_AUTO_APPROVE_DIRECTORIES_IN_DESKTOP_MODE": "true"
-      },
-      "disabled": true
+      }
     }
   }
 }

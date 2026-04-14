@@ -251,6 +251,42 @@ async def main():
                         print("MCP 管理器未初始化")
                 continue
 
+            if user_input.lower().startswith('mcp disable-tool '):
+                """禁用单个工具"""
+                tool_name = user_input[17:].strip()
+                if tool_name:
+                    if agent.mcp:
+                        success, message = agent.mcp.disable_tool(tool_name)
+                        print(f"\n{'[OK]' if success else '[FAIL]'} {message}")
+                    else:
+                        print("MCP 管理器未初始化")
+                continue
+
+            if user_input.lower().startswith('mcp enable-tool '):
+                """启用单个工具"""
+                tool_name = user_input[16:].strip()
+                if tool_name:
+                    if agent.mcp:
+                        success, message = agent.mcp.enable_tool(tool_name)
+                        print(f"\n{'[OK]' if success else '[FAIL]'} {message}")
+                    else:
+                        print("MCP 管理器未初始化")
+                continue
+
+            if user_input.lower() == 'mcp disabled-tools':
+                """列出被禁用的工具"""
+                if agent.mcp:
+                    disabled_tools = agent.mcp.list_disabled_tools()
+                    if disabled_tools:
+                        print("\n已禁用的工具:")
+                        for tool in disabled_tools:
+                            print(f"  - {tool}")
+                    else:
+                        print("\n没有禁用的工具")
+                else:
+                    print("MCP 管理器未初始化")
+                continue
+
             if user_input.lower() == 'mcp help':
                 """显示 MCP 管理帮助"""
                 print("\nMCP 管理命令:")
@@ -258,11 +294,14 @@ async def main():
                 print("  mcp list              - 列出所有 MCP 服务器")
                 print("  mcp add <name> <json> - 添加 MCP 服务器配置")
                 print("  mcp remove <name>     - 删除 MCP 服务器配置")
-                print("  mcp enable <name>     - 启用 MCP 服务器")
-                print("  mcp disable <name>    - 停用 MCP 服务器")
-                print("  mcp start <name>      - 启动 MCP 服务器")
-                print("  mcp stop <name>       - 停止 MCP 服务器")
-                print("  mcp help              - 显示此帮助")
+                print("  mcp enable <name>          - 启用 MCP 服务器")
+                print("  mcp disable <name>         - 停用 MCP 服务器")
+                print("  mcp start <name>           - 启动 MCP 服务器")
+                print("  mcp stop <name>            - 停止 MCP 服务器")
+                print("  mcp disable-tool <name>    - 禁用单个工具")
+                print("  mcp enable-tool <name>     - 启用单个工具")
+                print("  mcp disabled-tools         - 列出被禁用的工具")
+                print("  mcp help                   - 显示此帮助")
                 print()
                 print("示例:")
                 print('  mcp add 12306 \'{"command": "python", "args": ["/path/to/12306.py"]}\'')

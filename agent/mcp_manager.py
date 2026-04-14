@@ -303,6 +303,7 @@ class MCPManager:
         self.config_path = config_path
         self.connections: Dict[str, MCPConnection] = {}
         self.tools: Dict[str, Tuple[str, Tool]] = {}  # tool_name -> (mcp_name, Tool)
+        self.disabled_tools: set = set()  # 被禁用的工具名称集合
         
     async def load_config(self) -> None:
         """加载MCP配置并初始化连接"""
@@ -364,8 +365,15 @@ class MCPManager:
             print(f"加载MCP配置失败: {e}")
     
     def get_tools(self) -> List[Tool]:
-        """获取所有可用的MCP工具"""
-        return [tool for _, tool in self.tools.values()]
+        """获取所有可用的MCP工具（只返回正在运行的服务器的工具，且未被单独禁用）"""
+        available_tools = []
+        for tool_name, (mcp_name, tool) in self.tools.items():
+            # 只返回正在运行的 MCP 服务器的工具
+            if mcp_name in self.connections:
+                # 且未被单独禁用
+                if tool_name not in self.disabled_tools:
+                    available_tools.append(tool)
+        return available_tools
     
     def get_tool(self, name: str) -> Optional[Tool]:
         """获取指定工具"""
@@ -382,7 +390,11 @@ class MCPManager:
         connection = self.connections.get(mcp_name)
         
         if not connection:
-            return ToolResult(success=False, data=None, error=f"MCP连接 '{mcp_name}' 不存在")
+            return ToolResult(
+                success=False, 
+                data=None, 
+                error=f"MCP服务器 '{mcp_name}' 未运行或已被禁用，无法调用工具 '{tool_name}'"
+            )
         
         return await connection.call_tool(tool_name, parameters)
     
@@ -530,14 +542,35 @@ class MCPManager:
         if name in self.connections:
             asyncio.create_task(self.connections[name].cleanup_async())
             del self.connections[name]
-            # 删除相关工具
-            self.tools = {k: v for k, v in self.tools.items() if v[0] != name}
+        
+        # 删除相关工具（无论是否在运行，都要清理）
+        self.tools = {k: v for k, v in self.tools.items() if v[0] != name}
         
         if self._save_config_file(file_config):
             return True, f"MCP 服务器 '{name}' 已停用"
         else:
             return False, "保存配置失败"
-    
+
+    def disable_tool(self, tool_name: str) -> Tuple[bool, str]:
+        """禁用单个工具"""
+        if tool_name not in self.tools:
+            return False, f"工具 '{tool_name}' 不存在"
+
+        self.disabled_tools.add(tool_name)
+        return True, f"工具 '{tool_name}' 已禁用"
+
+    def enable_tool(self, tool_name: str) -> Tuple[bool, str]:
+        """启用单个工具"""
+        if tool_name not in self.disabled_tools:
+            return False, f"工具 '{tool_name}' 未被禁用"
+
+        self.disabled_tools.discard(tool_name)
+        return True, f"工具 '{tool_name}' 已启用"
+
+    def list_disabled_tools(self) -> List[str]:
+        """列出所有被禁用的工具"""
+        return list(self.disabled_tools)
+
     def list_mcp_servers(self) -> List[Dict[str, Any]]:
         """列出所有 MCP 服务器配置"""
         file_config = self._load_config_file()
