@@ -459,8 +459,11 @@ class App {
     }
 
     newChat() {
+        // 创建新对话 - 同时更新 sessionId 和 currentChatId
         this.messages = [];
         this.sessionId = this.generateSessionId();
+        this.currentChatId = this.sessionId;
+
         document.getElementById('chatMessages').innerHTML = `
             <div class="welcome-message">
                 <div class="welcome-icon">
@@ -485,6 +488,7 @@ class App {
             </div>
         `;
         this.switchPage('chat');
+        this.renderChatHistory();
     }
 
     clearChat() {
@@ -1534,40 +1538,6 @@ class App {
             console.error('清除历史失败:', e);
             this.showToast('清除失败', 'error');
         }
-    }
-
-    newChat() {
-        // 创建新对话
-        this.sessionId = this.generateSessionId();
-        this.currentChatId = this.sessionId;
-        this.messages = [];
-
-        // 清空聊天区域并显示欢迎消息
-        document.getElementById('chatMessages').innerHTML = `
-            <div class="welcome-message">
-                <div class="welcome-icon">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <h3>你好！我是 AI 智能助手</h3>
-                <p>我可以帮你解答问题、处理文件、管理工具等。试着问我点什么吧！</p>
-                <div class="quick-actions">
-                    <button class="quick-btn" onclick="app.sendQuickMessage('介绍一下你自己')">
-                        <i class="fas fa-user"></i>
-                        介绍自己
-                    </button>
-                    <button class="quick-btn" onclick="app.sendQuickMessage('查看可用工具')">
-                        <i class="fas fa-tools"></i>
-                        查看工具
-                    </button>
-                    <button class="quick-btn" onclick="app.sendQuickMessage('帮我搜索资料')">
-                        <i class="fas fa-search"></i>
-                        搜索资料
-                    </button>
-                </div>
-            </div>
-        `;
-
-        this.renderChatHistory();
     }
 
     toggleHistory() {

@@ -56,18 +56,17 @@
       "disabled": true,
       "timeout": 60,
       "type": "stdio",
-      "command": "D:/Join_Agent/mcp/mcp_filesystem/.venv/Scripts/python.exe",
+      "command": "D:/openjoin/mcp/custom-mcp-database/.venv/Scripts/python.exe",
       "args": [
-        "D:/Join_Agent/mcp/mcp_filesystem/run_mcp.py"
+        "D:/openjoin/mcp/mcp_filesystem/run_mcp.py"
       ]
     },
     "custom-mcp-database": {
-      "disabled": true,
       "timeout": 60,
       "type": "stdio",
-      "command": "D:/Join_Agent/mcp/custom-mcp-database/.venv/Scripts/python.exe",
+      "command": "D:/openjoin/mcp/custom-mcp-database/.venv/Scripts/python.exe",
       "args": [
-        "d:/Join_Agent/mcp/custom-mcp-database/main.py"
+        "d:/openjoin/mcp/custom-mcp-database/main.py"
       ]
     },
     "windows-mcp": {

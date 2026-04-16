@@ -14,6 +14,41 @@
 - **文件上传**: 支持多文件、文件夹上传，兼容中文文件名
 - **前端界面**: 美观的 Web 管理界面
 
+## 工具列表
+
+基本工具
+
+1.联网搜索：[GitHub链接](https://github.com/w1397434872/fetch_mcp_server)
+
+2.文件管理：[GitHub链接]()
+
+3.windows命令行操作：[GitHub链接](https://github.com/CursorTouch/Windows-MCP)
+
+4.linux/macos命令行操作：[GitHub链接](https://github.com/w1397434872/Generalshell_mcp_server)
+
+5.读取文件：[GitHub链接](https://github.com/nickovs/mcp_file_reader)
+
+附加工具
+
+6.数据库连接 增删改查：[GitHub链接](https://github.com/renanlido/custom-mcp-database)
+
+7.12306查票：[GitHub链接](https://github.com/w1397434872/12306train_mcp_server)
+
+8.sirchmunk 读取文件：[GitHub链接](https://github.com/modelscope/sirchmunk)
+
+## 使用实列
+
+![示例图](.github\image\首页.png "这是一张示例图")
+
+![示例图](.github\image\12306对话.png "12306对话")
+
+
+![img](.github\image\联网查询.png "联网查询")
+
+
+![img](.github\image\命令行操作.png "命令行操作")
+
+
 ## 项目结构
 
 ```
@@ -51,17 +86,14 @@
 
 ```bash
 # 克隆项目
-git clone <your-repo-url>
+git clone https://github.com/w1397434872/openjoin
 cd openjoin
 
 # 创建虚拟环境
-python -m venv venv
+conda create -n openjoin python=3.9
 
 # 激活虚拟环境
-# Windows:
-venv\Scripts\activate
-# Linux/Mac:
-source venv/bin/activate
+conda activate openjoin
 
 # 安装依赖
 pip install -r requirements.txt
@@ -83,6 +115,7 @@ docker-compose ps
 ```
 
 服务启动后：
+
 - Milvus 服务地址: `localhost:19530`
 - MinIO 控制台: http://localhost:9001 (账号/密码: minioadmin/minioadmin)
 
@@ -143,6 +176,10 @@ python start_api.py --reload
 
 # 自定义端口
 python start_api.py --port 8080
+
+#前端启动示例
+cd D:\openjoin\web
+python -m http.server 8080
 ```
 
 服务启动后访问：
