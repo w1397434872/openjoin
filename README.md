@@ -40,13 +40,13 @@
 
 ![示例图](.github/image/首页.png "这是一张示例图")
 
-![示例图](.github\image\12306对话.png "12306对话")
+![示例图](.github/image/12306对话.png "12306对话")
 
 
-![img](.github\image\联网查询.png "联网查询")
+![img](.github/image/联网查询.png "联网查询")
 
 
-![img](.github\image\命令行操作.png "命令行操作")
+![img](.github/image/命令行操作.png "命令行操作")
 
 
 ## 项目结构
