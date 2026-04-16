@@ -38,7 +38,7 @@
 
 ## 使用实列
 
-![示例图](.github\image\首页.png "这是一张示例图")
+![示例图](.github/image/首页.png "这是一张示例图")
 
 ![示例图](.github\image\12306对话.png "12306对话")
 
