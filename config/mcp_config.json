@@ -22,9 +22,9 @@
       "disabled": false,
       "timeout": 60,
       "type": "stdio",
-      "command": "D:/adaconda/envs/agent/python.exe",
+      "command": "uvx",
       "args": [
-        "D:\\12306查票助手智能体\\src\\12306_mcp.py"
+        "train12306-mcp-server"
       ]
     },
     "sirchmunk": {

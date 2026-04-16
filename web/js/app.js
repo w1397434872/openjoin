@@ -2,7 +2,23 @@
  * AI 智能助手前端应用
  */
 
-const API_BASE_URL = 'http://localhost:8000';
+// 自动检测 API 地址
+// 如果前端通过 localhost 访问，使用 localhost:8000
+// 如果前端通过 IP 或域名访问，使用相同的主机名但端口为 8000
+const getApiBaseUrl = () => {
+    const currentHost = window.location.hostname;
+    const currentPort = window.location.port;
+    
+    // 如果当前是通过 8080 端口访问（前端服务），API 在 8000 端口
+    if (currentPort === '8080' || currentPort === '') {
+        return `http://${currentHost}:8000`;
+    }
+    
+    // 默认使用 localhost
+    return 'http://localhost:8000';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 class App {
     constructor() {
